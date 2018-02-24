@@ -7,3 +7,12 @@
     source venv/bin/activate
     python app.py
   ```
+2. Or run with `gunicorn` server
+  ```
+    source stash.sh
+  ```
+  or
+  ```
+    source venv/bin/activate
+    gunicorn --bind 0.0.0.0:8000 wsgi:app
+  ```
