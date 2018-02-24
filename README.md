@@ -9,7 +9,7 @@
   ```
 2. Or run with `gunicorn` server
   ```
-    source stash.sh
+    source start.sh
   ```
   or
   ```
