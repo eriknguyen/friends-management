@@ -32,6 +32,12 @@ def user_by_id(id):
 def add_user():
     req_json = request.get_json()
     email = req_json["email"]
+    check_user = data_store.get_users(email=email)
+    if check_user and len(check_user) > 0:
+        return jsonify({
+            'message': 'User is already created.',
+            'id': check_user[0].id
+        })
     new_user_id = data_store.add_user(email=email)
 
     return jsonify({

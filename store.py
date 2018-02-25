@@ -33,7 +33,6 @@ class Store:
         :param email: Email address of the user
         :return: The id of the new user
         """
-
         new_user = User(email=email)
 
         self.session.add(new_user)
@@ -41,7 +40,7 @@ class Store:
 
         return new_user.id
 
-    def get_users(self, id=None, serialize=False):
+    def get_users(self, id=None, email=None, serialize=False):
         """
         If the id parameter is  defined then it looks up the user with the given id,
         otherwise it loads all the users
@@ -50,7 +49,10 @@ class Store:
         :return: The list of users
         """
         if id is None:
-            all_users = self.session.query(User).order_by(User.email).all()
+            if email is None:
+                all_users = self.session.query(User).order_by(User.email).all()
+            else:
+                all_users = self.session.query(User).filter(User.email == email).all()
         else:
             all_users = self.session.query(User).filter(User.id == id).all()
 
