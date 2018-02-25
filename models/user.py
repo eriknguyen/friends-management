@@ -9,7 +9,7 @@ friend_map = db.Table(
     db.Column('user2_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-follow_map = db.Table(
+subscribe_map = db.Table(
     'subscribe_map',
     Model.metadata,
     db.Column('subscriber_id', db.Integer, db.ForeignKey('user.id')),
@@ -27,12 +27,27 @@ block_map = db.Table(
 class User(Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True)
-    email = db.Column(db.String(200), nullable=False)
+    email = db.Column(db.String(200), nullable=False, unique=True)
 
-    # friends = relationship('User', secondary=friend_map, backref=backref('friends', lazy='joined'), lazy='dynamic')
-    # followings = relationship('User', secondary=follow_map, backref=backref('followers', lazy='joined'), lazy='dynamic')
-    # block_list = relationship('User', secondary=block_map, backref=backref('block_by_list', lazy='joined'),
-    #                           lazy='dynamic')
+    friends = relationship(
+        'User', secondary=friend_map,
+        primaryjoin=(friend_map.c.user1_id == id),
+        secondaryjoin=(friend_map.c.user2_id == id),
+        lazy='dynamic')
+
+    subscribings = relationship(
+        'User', secondary=subscribe_map,
+        primaryjoin=(subscribe_map.c.subscriber_id == id),
+        secondaryjoin=(subscribe_map.c.target_id == id),
+        backref=backref('subscribers', lazy='dynamic'), lazy='dynamic')
+
+    blockings = relationship(
+        'User', secondary=block_map,
+        primaryjoin=(block_map.c.blocker_id == id),
+        secondaryjoin=(block_map.c.target_id == id),
+        backref=backref('blockeds', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     def serialize(self):
         return {
