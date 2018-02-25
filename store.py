@@ -40,27 +40,41 @@ class Store:
 
         return new_user.id
 
-    def get_users(self, id=None, email=None, serialize=False):
+    def get_users(self, serialize=False):
         """
-        If the id parameter is  defined then it looks up the user with the given id,
-        otherwise it loads all the users
-
-        :param id: The id of the user which needs to be loaded (default value is None)
         :return: The list of users
         """
-        if id is None:
-            if email is None:
-                all_users = self.session.query(User).order_by(User.email).all()
-            else:
-                all_users = self.session.query(User).filter(User.email == email).all()
-        else:
-            all_users = self.session.query(User).filter(User.id == id).all()
-
+        all_users = self.session.query(User).filter(User.id == id).all()
         if serialize:
             return [u.serialize() for u in all_users]
         else:
             return all_users
 
+    def get_user_by_id(self, id, serialize=False):
+        user = self.session.query(User).filter_by(id=id).first()
+        if not user:
+            return None
+        if serialize:
+            return user.serialize()
+        else:
+            return user
+
+    def get_user_by_email(self, email, serialize=False):
+        user = self.session.query(User).filter_by(email=email).first()
+        if not user:
+            return None
+        if serialize:
+            return user.serialize()
+        else:
+            return user
+
+    def connect_users(self, user1_email, user2_email):
+        user1 = self.session.query(User).filter_by(email=user1_email).first()
+        user2 = self.session.query(User).filter_by(email=user2_email).first()
+        user1.friends.append(user2)
+        self.session.add(user1)
+        self.session.commit()
+        return True
 
     def delete_user(self, id):
         try:

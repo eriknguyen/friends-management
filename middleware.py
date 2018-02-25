@@ -22,7 +22,7 @@ def user(serialize = True):
 
 
 def user_by_id(id):
-    current_user = data_store.get_users(id, serialize=True)
+    current_user = data_store.get_user_by_id(id, serialize=True)
     if current_user:
         return jsonify({"user": current_user})
     else:
@@ -32,11 +32,11 @@ def user_by_id(id):
 def add_user():
     req_json = request.get_json()
     email = req_json["email"]
-    check_user = data_store.get_users(email=email)
-    if check_user and len(check_user) > 0:
+    check_user = data_store.get_user_by_email(email, serialize=True)
+    if check_user:
         return jsonify({
             'message': 'User is already created.',
-            'id': check_user[0].id
+            'id': check_user.id
         })
     new_user_id = data_store.add_user(email=email)
 
@@ -57,7 +57,28 @@ def delete_user(id):
 
 
 def connect_friends():
-    pass
+    req_json = request.get_json()
+    friends = req_json["friends"]
+    if data_store.get_user_by_email(friends[0]) is None:
+        return jsonify({
+            'error': 'User %s is not valid' % friends[0]
+        }), 404
+
+    if data_store.get_user_by_email(friends[1]) is None:
+        return jsonify({
+            'error': 'User %s is not valid' % friends[1]
+        }), 404
+
+    try:
+        data_store.connect_users(friends[0], friends[1])
+        return jsonify({
+            'success': True
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
+
 
 
 def friends_list():
