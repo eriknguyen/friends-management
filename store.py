@@ -105,4 +105,19 @@ class Store:
         return common_friends
 
 
+    def subscribe_user(self, requestor_email, target_email):
+        requestor = self.get_user_by_email(requestor_email)
+        target = self.get_user_by_email(target_email)
+        requestor.subscribings.append(target)
+        self.session.add(requestor)
+        self.session.commit()
+        return True
 
+
+    def block_user(self, requestor_email, target_email):
+        requestor = self.get_user_by_email(requestor_email)
+        target = self.get_user_by_email(target_email)
+        requestor.blockings.append(target)
+        self.session.add(requestor)
+        self.session.commit()
+        return True

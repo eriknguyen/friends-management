@@ -118,11 +118,53 @@ def common_friends():
 
 
 def subscribe():
-    pass
+    req_json = request.get_json()
+    requestor = req_json["requestor"]
+    target = req_json["target"]
+    if data_store.get_user_by_email(requestor) is None:
+        return jsonify({
+            'error': 'Requestor email (%s) is not valid' % requestor
+        }), 404
+
+    if data_store.get_user_by_email(requestor) is None:
+        return jsonify({
+            'error': 'Target email (%s) is not valid' % target
+        }), 404
+
+    try:
+        data_store.subscribe_user(requestor, target)
+        return jsonify({
+            'success': True
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
 
 
 def block_friends():
-    pass
+    req_json = request.get_json()
+    requestor = req_json["requestor"]
+    target = req_json["target"]
+    if data_store.get_user_by_email(requestor) is None:
+        return jsonify({
+            'error': 'Requestor email (%s) is not valid' % requestor
+        }), 404
+
+    if data_store.get_user_by_email(requestor) is None:
+        return jsonify({
+            'error': 'Target email (%s) is not valid' % target
+        }), 404
+
+    try:
+        data_store.block_user(requestor, target)
+        return jsonify({
+            'success': True
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
 
 
 def subscribers_list():
