@@ -92,7 +92,29 @@ def friends_list():
 
 
 def common_friends():
-    pass
+    req_json = request.get_json()
+    friends = req_json["friends"]
+    if data_store.get_user_by_email(friends[0]) is None:
+        return jsonify({
+            'error': 'User %s is not valid' % friends[0]
+        }), 404
+
+    if data_store.get_user_by_email(friends[1]) is None:
+        return jsonify({
+            'error': 'User %s is not valid' % friends[1]
+        }), 404
+
+    try:
+        common_friends = data_store.get_user_common_friends(friends[0], friends[1])
+        return jsonify({
+            'success': True,
+            'friends': [u.email for u in common_friends],
+            'count': len(common_friends)
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
 
 
 def subscribe():

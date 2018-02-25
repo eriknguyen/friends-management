@@ -68,11 +68,20 @@ class Store:
         else:
             return user
 
+    def delete_user(self, id):
+        try:
+            self.session.query(User).filter_by(id=id).delete()
+            return True
+        except:
+            return None
+
     def connect_users(self, user1_email, user2_email):
-        user1 = self.session.query(User).filter_by(email=user1_email).first()
-        user2 = self.session.query(User).filter_by(email=user2_email).first()
+        user1 = self.get_user_by_email(user1_email)
+        user2 = self.get_user_by_email(user2_email)
         user1.friends.append(user2)
+        user2.friends.append(user1)
         self.session.add(user1)
+        self.session.add(user2)
         self.session.commit()
         return True
 
@@ -81,11 +90,19 @@ class Store:
         if serialize:
             return [u.serialize() for u in user.friends]
         else:
+            print(user.friends.count())
             return user.friends
 
-    def delete_user(self, id):
-        try:
-            self.session.query(User).filter_by(id=id).delete()
-            return True
-        except:
-            return None
+    def get_user_common_friends(self, user1_email, user2_email):
+        user1_friends = self.get_user_friends(user1_email)
+        user2_friends = self.get_user_friends(user2_email)
+        common_friends = []
+        # temporarily using a quadraric-time function to find common friends
+        for friend in user1_friends:
+            if friend in user2_friends:
+                common_friends.append(friend)
+
+        return common_friends
+
+
+
