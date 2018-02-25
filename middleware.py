@@ -56,5 +56,29 @@ def delete_user(id):
         }), 404
 
 
+def connect_friends():
+    pass
+
+
+def friends_list():
+    pass
+
+
+def common_friends():
+    pass
+
+
+def subscribe():
+    pass
+
+
+def block_friends():
+    pass
+
+
+def subscribers_list():
+    pass
+
+
 def build_message(key, message):
     return {key:message}

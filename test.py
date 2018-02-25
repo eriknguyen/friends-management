@@ -95,7 +95,7 @@ class AppTestCase(unittest.TestCase):
             "sender":  friend_subscriber,
             "text": "Hello World! " + mentioned_subscriber
         }
-        resp = self.app.post('api/friends/update', data=json.dumps(req_json), content_type='application/json')
+        resp = self.app.post('api/friends/subscribers', data=json.dumps(req_json), content_type='application/json')
         data = self.get_json(resp)
         assert data['success'] == True
         assert friend_subscriber in data['recipients']
