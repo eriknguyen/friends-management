@@ -32,7 +32,7 @@ def user_by_id(id):
 def add_user():
     req_json = request.get_json()
     email = req_json["email"]
-    check_user = data_store.get_user_by_email(email, serialize=True)
+    check_user = data_store.get_user_by_email(email)
     if check_user:
         return jsonify({
             'message': 'User is already created.',
@@ -168,7 +168,45 @@ def block_friends():
 
 
 def subscribers_list():
-    pass
+    req_json = request.get_json()
+    sender = req_json["sender"]
+    text = req_json["text"]
+    if data_store.get_user_by_email(sender) is None:
+        return jsonify({
+            'error': 'Sender email (%s) is not valid' % sender
+        }), 404
+
+    try:
+        mentioned_emails = get_mentioned_emails(text)
+        mentioned_list = data_store.get_users(email_list=mentioned_emails)
+        friends_list = data_store.get_user_friends(sender).all()
+        subscribers_list = data_store.get_user_subscribers(sender).all()
+        recipients = set([u.email for u in mentioned_list + friends_list + subscribers_list])
+        blocked_list = [u.email for u in data_store.get_user_blocked_list(sender).all()]
+        for user in blocked_list:
+            recipients.remove(user)
+        return jsonify({
+            'success': True,
+            'recipients': list(recipients)
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
+
+
+def get_mentioned_emails(text):
+    result = []
+    text = text.strip() + ' '
+    at_index = text.find('@')
+    if at_index == -1:
+        return result
+    prev_space_index = at_index - text[:at_index][::-1].find(' ')
+    next_space_index = at_index + text[at_index:].find(' ')
+    email = text[prev_space_index:next_space_index]
+    result.append(email)
+    result += get_mentioned_emails(text[next_space_index:])
+    return result
 
 
 def build_message(key, message):

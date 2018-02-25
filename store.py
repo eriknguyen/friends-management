@@ -40,11 +40,14 @@ class Store:
 
         return new_user.id
 
-    def get_users(self, serialize=False):
+    def get_users(self, email_list=None, serialize=False):
         """
         :return: The list of users
         """
-        all_users = self.session.query(User).filter(User.id == id).all()
+        if email_list:
+            all_users = self.session.query(User).filter(User.email.in_(email_list)).all()
+        else:
+            all_users = self.session.query(User).all()
         if serialize:
             return [u.serialize() for u in all_users]
         else:
@@ -90,7 +93,6 @@ class Store:
         if serialize:
             return [u.serialize() for u in user.friends]
         else:
-            print(user.friends.count())
             return user.friends
 
     def get_user_common_friends(self, user1_email, user2_email):
@@ -121,3 +123,17 @@ class Store:
         self.session.add(requestor)
         self.session.commit()
         return True
+
+    def get_user_subscribers(self, email, serialize=False):
+        user = self.session.query(User).filter_by(email=email).first()
+        if serialize:
+            return [u.serialize() for u in user.subscribers]
+        else:
+            return user.subscribers
+
+    def get_user_blocked_list(self, email, serialize=False):
+        user = self.session.query(User).filter_by(email=email).first()
+        if serialize:
+            return [u.serialize() for u in user.blockeds]
+        else:
+            return user.blockeds
