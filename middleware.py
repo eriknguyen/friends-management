@@ -80,9 +80,15 @@ def connect_friends():
         }), 500
 
 
-
 def friends_list():
-    pass
+    req_json = request.get_json()
+    email = req_json['email']
+    friends = data_store.get_user_friends(email, serialize=True)
+    return jsonify({
+        'success': True,
+        'friends': [u['email'] for u in friends],
+        'count': len(friends)
+    })
 
 
 def common_friends():

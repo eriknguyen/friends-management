@@ -76,6 +76,13 @@ class Store:
         self.session.commit()
         return True
 
+    def get_user_friends(self, email, serialize=False):
+        user = self.session.query(User).filter_by(email=email).first()
+        if serialize:
+            return [u.serialize() for u in user.friends]
+        else:
+            return user.friends
+
     def delete_user(self, id):
         try:
             self.session.query(User).filter_by(id=id).delete()
