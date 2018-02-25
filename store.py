@@ -58,3 +58,11 @@ class Store:
             return [u.serialize() for u in all_users]
         else:
             return all_users
+
+
+    def delete_user(self, id):
+        try:
+            self.session.query(User).filter_by(id=id).delete()
+            return True
+        except:
+            return None

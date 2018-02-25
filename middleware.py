@@ -38,5 +38,12 @@ def add_user():
     })
 
 
+def delete_user(id):
+    if data_store.delete_user(id):
+        return make_response('', 200)
+    else:
+        return abort(404)
+
+
 def build_message(key, message):
     return {key:message}

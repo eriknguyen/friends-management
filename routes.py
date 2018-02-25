@@ -1,7 +1,8 @@
 from flask import jsonify
 
-from middleware import user_by_id, user, add_user
-from middleware import build_message, initialize_database as init_db
+from middleware import user_by_id, user, add_user, delete_user
+from middleware import initialize_database as init_db
+from middleware import build_message
 
 
 def init_api_routes(app):
@@ -10,6 +11,7 @@ def init_api_routes(app):
         app.add_url_rule('/api/users/<string:id>', 'user_by_id', user_by_id, methods=['GET'])
         app.add_url_rule('/api/users', 'user', user, methods=['GET'])
         app.add_url_rule('/api/users', 'add_user', add_user, methods=['POST'])
+        app.add_url_rule('/api/users/delete/<string:id>', 'delete_user', delete_user, methods=['DELETE'])
 
         app.add_url_rule('/api/initdb', 'initdb', initialize_database)
         app.add_url_rule('/api', 'list_routes', list_routes, methods=['GET'], defaults={'app': app})
