@@ -121,16 +121,15 @@ class AppTestCase(unittest.TestCase):
         assert data['id'] is not None
 
     def test_get_user_by_id(self, id=None, email=None):
-        id = id or 5
+        id = id or 3
         email = email or 'test_user@example.com'
         resp = self.app.get('/api/users/' + str(id))
         data = self.get_json(resp)
         assert data['user'] is not None
         user = data['user']
-        if email:
-            assert user['email'] == email
-        else:
-            assert user['email'] is not None
+        assert user['id'] is not None
+        assert user['email'] is not None
+
     # end basic test cases for users
 
     def get_json(self, resp):
