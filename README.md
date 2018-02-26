@@ -2,28 +2,39 @@
 *A simple friends management API built with Flask and MySQL*
 
 ## Up and Running
-#### 1. Run app with Python
+#### 1. Setup
+  ```bash
+    pyvenv venv -p python3
+    # Or: virtualenv venv -p python3
+    
+    source venv/bin/activate
+    pip install -r requirements.txt
   ```
+
+#### 1. Run app with Python
+  ```bash
     source venv/bin/activate
     python app.py
   ```
+
 #### 2. Or run with `gunicorn` server
-  ```
+  ```bash
+    # use start script
     source start.sh
-  ```
-  or
-  ```
+
+    # or manually
     source venv/bin/activate
     gunicorn --bind 0.0.0.0:8000 wsgi:app
   ```
+
 #### 3. Test  
   Run test in virtual environment
-  ```
+  ```bash
     source venv/bin/activate
     python test.py
   ```
 
----
+
 ## Overview of the designs
 ### 1. Technical decisions
   * [Python Flask](http://flask.pocoo.org/) is used for quick installation and fast deployment with high flexibility and scalability
@@ -179,7 +190,7 @@
     - Success:
       ```json
         {
-          "success": true
+          "success": true,
           "recipients": [
             "lisa@example.com",
             "kate@example.com"
