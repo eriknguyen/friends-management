@@ -2,6 +2,7 @@ from flask import jsonify, request
 from store import Store
 
 db_engine = 'mysql+pymysql://root:root@localhost:8889/friends_management'
+# db_engine = 'mysql+pymysql://root:namkhanh164@localhost:3306/friends_management'
 data_store = Store(db_engine)
 
 
