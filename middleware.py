@@ -84,12 +84,17 @@ def connect_friends():
 def friends_list():
     req_json = request.get_json()
     email = req_json['email']
-    friends = data_store.get_user_friends(email, serialize=True)
-    return jsonify({
-        'success': True,
-        'friends': [u['email'] for u in friends],
-        'count': len(friends)
-    })
+    try:
+        friends = data_store.get_user_friends(email, serialize=True)
+        return jsonify({
+            'success': True,
+            'friends': [u['email'] for u in friends],
+            'count': len(friends)
+        })
+    except Exception as e:
+        return jsonify({
+            'error': 'Internal Server Error: ' + str(e)
+        }), 500
 
 
 def common_friends():
